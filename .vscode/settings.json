@@ -1,0 +1,4 @@
+{
+    "amxxpawn.compiler.outputType": "path",
+    "amxxpawn.compiler.outputPath": "${workspaceRoot}/cstrike/addons/amxmodx/plugins"
+}
