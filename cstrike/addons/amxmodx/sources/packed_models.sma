@@ -2,6 +2,7 @@
 #include < fakemeta >
 #include < hamsandwich >
 
+#define VERSION "1.1.0"
 
 /**
  * Defines if dropped C4 backpack should be rendered
@@ -34,7 +35,7 @@ public ENTITIES[MAX_PLAYERS + 1];
 
 public plugin_init()
 {
-    register_plugin("Packed Models", "1.0.0", "AdamRichard21st");
+    register_plugin("Packed Models", VERSION, "AdamRichard21st");
 
     for (new i = CSW_P228, weaponName[32]; i <= CSW_P90; i++)
     {
