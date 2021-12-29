@@ -23,6 +23,15 @@ First and foremost, your server must to have [amxmodx](https://wiki.alliedmods.n
 
 [read more](https://wiki.alliedmods.net/Configuring_AMX_Mod_X#Plugins)
 
+# Compiling options
+
+This plugin contains a compiler directive that can be setted up on [packed_models.sma](https://github.com/AdamRichard21st/PackedModels/tree/master/cstrike/addons/amxmodx/sources/packed_models.sma) source file.
+
+Token                       | Default   | Description
+----------------------------|-----------|------------
+`C4_BACKPACK_SUPPORT`       | `true`    | Defines if dropped C4 backpack should be rendered from the packed models file. Values:<br>`true` - packed backpack will be rendered<br>`false` - default backpack will be rendered
+
+**Note**: Make sure to recompile the plugin once the compiler directives has been changed.
 
 # Want to help?
 
