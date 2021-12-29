@@ -7,6 +7,7 @@
 #define CUSTOM_CGRENADE_ID      33
 #define CUSTOM_CWEAPONBOX_ID    34
 
+
 enum PackedModelsAnimations
 {
     ANIM_WEAPON_PLAYER = 0,
@@ -111,38 +112,78 @@ public OnWeaponBoxSpawn(weaponbox)
         return;
     }
 
-    SetWeaponBoxStatus(weaponbox, WeaponBoxSpawned);
+    SetCustomId(weaponbox, CUSTOM_CWEAPONBOX_ID);
 }
 
 
 public OnSetModel(entity, const model[])
 {
-    if (!pev_valid(entity) || GetWeaponBoxStatus(entity) != WeaponBoxSpawned)
+    if (!pev_valid(entity))
     {
         return FMRES_IGNORED;
     }
 
-    for (new i = 0; i < MAX_CWEAPONBOX_ITEMS; i++)
+    switch (GetCustomId(entity))
     {
-        new weapon = get_ent_data_entity(entity, "CWeaponBox", "m_rgpPlayerItems", i);
-
-        if (pev_valid(weapon) != 2)
+        case CUSTOM_CGRENADE_ID:
         {
-            continue;
+            return RenderCustomGrenade(entity);
         }
-
-        new weaponId = get_ent_data(weapon, "CBasePlayerItem", "m_iId");
-
-        engfunc(EngFunc_SetModel, entity, PACKED_MODELS_FILE);
-        set_pev(entity, pev_body, weaponId);
-        set_pev(entity, pev_sequence, ANIM_WEAPON_WORLD);
-
-        SetWeaponBoxStatus(entity, WeaponBoxModelChanged);
-
-        return FMRES_SUPERCEDE;
+        case CUSTOM_CWEAPONBOX_ID:
+        {
+            return RenderCustomWeaponBox(entity);
+        }
     }
 
     return FMRES_IGNORED;
+}
+
+
+RenderCustomGrenade(grenade)
+{
+    new grenadeId = GetCGrenadeType(grenade);
+
+    if (grenadeId == CSW_NONE)
+    {
+        return FMRES_IGNORED;
+    }
+
+    engfunc(EngFunc_SetModel, grenade, PACKED_MODELS_FILE);
+    set_pev(grenade, pev_body, grenadeId);
+    set_pev(grenade, pev_sequence, ANIM_WEAPON_WORLD);
+
+    return FMRES_SUPERCEDE;
+}
+
+
+RenderCustomWeaponBox(weaponbox)
+{
+    new bool:validWeapon;
+    new weapon;
+    
+    for (new i = 0; i < MAX_CWEAPONBOX_ITEMS; i++)
+    {
+        weapon = get_ent_data_entity(weaponbox, "CWeaponBox", "m_rgpPlayerItems", i);
+
+        if (pev_valid(weapon))
+        {
+            validWeapon = true;
+            break;
+        }
+    }
+
+    if (!validWeapon)
+    {
+        return FMRES_IGNORED;
+    }
+
+    new weaponId = get_ent_data(weapon, "CBasePlayerItem", "m_iId");
+
+    engfunc(EngFunc_SetModel, weaponbox, PACKED_MODELS_FILE);
+    set_pev(weaponbox, pev_body, weaponId);
+    set_pev(weaponbox, pev_sequence, ANIM_WEAPON_WORLD);
+
+    return FMRES_SUPERCEDE;
 }
 
 
