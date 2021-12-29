@@ -50,6 +50,7 @@ $bodygroup "weapons" {
 	studio "geometry/ak47"
 	studio "geometry/knife"
 	studio "geometry/p90"
+	studio "geometry/backpack"
 }
 
 
