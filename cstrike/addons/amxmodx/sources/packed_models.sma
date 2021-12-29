@@ -177,13 +177,13 @@ HidePlayerWeapon(id)
 }
 
 
-SetWeaponBoxStatus(weaponbox, WeaponBoxStatus:status)
+SetCustomId(entity, customId)
 {
-    set_pev(weaponbox, pev_euser1, _:status);
+    set_pev(entity, pev_euser1, customId);
 }
 
 
-WeaponBoxStatus:GetWeaponBoxStatus(weaponbox)
+GetCustomId(entity)
 {
-    return WeaponBoxStatus:pev(weaponbox, pev_euser1);
+    return pev(entity, pev_euser1);
 }
