@@ -2,14 +2,10 @@
 #include < fakemeta >
 #include < hamsandwich >
 
-#define MAX_CWEAPONBOX_ITEMS 6
+#define MAX_CWEAPONBOX_ITEMS    6
 
-enum WeaponBoxStatus
-{
-    WeaponBoxCreated = 0,
-    WeaponBoxSpawned,
-    WeaponBoxModelChanged
-}
+#define CUSTOM_CGRENADE_ID      33
+#define CUSTOM_CWEAPONBOX_ID    34
 
 enum PackedModelsAnimations
 {
