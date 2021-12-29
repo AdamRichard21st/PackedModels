@@ -33,6 +33,8 @@ public plugin_init()
     }
 
     RegisterHam(Ham_Spawn, "weaponbox", "OnWeaponBoxSpawn", .Post = true);
+    RegisterHam(Ham_Spawn, "grenade", "OnGrenadeSpawn", .Post = true);
+
     register_forward(FM_SetModel, "OnSetModel");
 
     CreateBaseEntities();
@@ -88,6 +90,17 @@ public OnWeaponHolster(weapon)
     }
 
     set_pev(ENTITIES[owner], pev_body, CSW_NONE);
+}
+
+
+public OnGrenadeSpawn(grenade)
+{
+    if (!pev_valid(grenade))
+    {
+        return;
+    }
+
+    SetCustomId(grenade, CUSTOM_CGRENADE_ID);
 }
 
 
