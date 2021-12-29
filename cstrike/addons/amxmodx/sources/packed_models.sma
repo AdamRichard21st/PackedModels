@@ -2,7 +2,19 @@
 #include < fakemeta >
 #include < hamsandwich >
 
+
+/**
+ * Defines if dropped C4 backpack should be rendered
+ * from the packed models file. Values:
+ *
+ *  true - packed backpack will be rendered
+ *  false - default backpack will be rendered
+ */
+#define C4_BACKPACK_SUPPORT true
+
+
 #define MAX_CWEAPONBOX_ITEMS    6
+#define CSW_BACKPACK            CSW_P90 + 1
 
 #define CUSTOM_CGRENADE_ID      33
 #define CUSTOM_CWEAPONBOX_ID    34
@@ -178,6 +190,15 @@ RenderCustomWeaponBox(weaponbox)
     }
 
     new weaponId = get_ent_data(weapon, "CBasePlayerItem", "m_iId");
+
+    if (weaponId == CSW_C4)
+    {
+        #if C4_BACKPACK_SUPPORT
+            weaponId = CSW_BACKPACK;
+        #else
+            return FMRES_IGNORED;
+        #endif
+    }
 
     engfunc(EngFunc_SetModel, weaponbox, PACKED_MODELS_FILE);
     set_pev(weaponbox, pev_body, weaponId);
