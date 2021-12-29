@@ -177,6 +177,34 @@ HidePlayerWeapon(id)
 }
 
 
+GetCGrenadeType(grenade)
+{
+    if (get_ent_data(grenade, "CGrenade", "m_bIsC4"))
+    {
+        return CSW_C4;
+    }
+
+    new eventFlags = get_ent_data(grenade, "CGrenade", "m_usEvent");
+
+    if (eventFlags & (1 << 0))
+    {
+        return CSW_HEGRENADE;
+    }
+
+    if (eventFlags & (1 << 1))
+    {
+        return CSW_SMOKEGRENADE;
+    }
+
+    if (!eventFlags)
+    {
+        return CSW_FLASHBANG;
+    }
+
+    return CSW_NONE;
+}
+
+
 SetCustomId(entity, customId)
 {
     set_pev(entity, pev_euser1, customId);
