@@ -7,7 +7,7 @@ This plugin offers a way to pack all weapons `p_*.mdl` and `w_*.mdl` into a sing
 # Features
 
 * Uses only a single `.mdl` file to render all weapons `p_*.mdl` and `w_*.mdl`.
-* Makes it able to reduce precache count by `57`.
+* Makes it able to reduce precache count by `58`.
 
 # Disclaimer
 
