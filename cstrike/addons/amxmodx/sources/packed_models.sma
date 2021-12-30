@@ -2,6 +2,7 @@
 #include < fakemeta >
 #include < hamsandwich >
 
+#define VERSION "1.2.0"
 
 #define MAX_CWEAPONBOX_ITEMS    6
 #define CSW_BACKPACK            CSW_P90 + 1
