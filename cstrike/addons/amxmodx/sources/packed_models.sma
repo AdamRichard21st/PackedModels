@@ -14,11 +14,47 @@
 #define C4_BACKPACK_SUPPORT true
 
 
-#define MAX_CWEAPONBOX_ITEMS    6
-#define CSW_BACKPACK            CSW_P90 + 1
+/**
+ * This list defines which weapons must not be rendered
+ * from packed models file. It affects p_ and w_ variants.
+ *
+ * Usage: Just uncomment weapons you want to be ignored.
+ */
+public const IGNORE_LIST[] = {
+    // fixed item, please, do not remove
+    CSW_NONE,
 
-#define CUSTOM_CGRENADE_ID      33
-#define CUSTOM_CWEAPONBOX_ID    34
+    // CSW_P228,
+    // CSW_SCOUT,
+    // CSW_HEGRENADE,
+    // CSW_XM1014,
+    // CSW_C4,
+    // CSW_MAC10,
+    // CSW_AUG,
+    // CSW_SMOKEGRENADE,
+    // CSW_ELITE,
+    // CSW_FIVESEVEN,
+    // CSW_UMP45,
+    // CSW_SG550,
+    // CSW_GALIL,
+    // CSW_FAMAS,
+    // CSW_USP,
+    // CSW_GLOCK18,
+    // CSW_AWP,
+    // CSW_MP5NAVY,
+    // CSW_M249,
+    // CSW_M3,
+    // CSW_M4A1,
+    // CSW_TMP,
+    // CSW_G3SG1,
+    // CSW_FLASHBANG,
+    // CSW_DEAGLE,
+    // CSW_SG552,
+    // CSW_AK47,
+    // CSW_KNIFE,
+    // CSW_P90,
+    // CSW_BACKPACK,
+};
 
 
 enum PackedModelsAnimations
