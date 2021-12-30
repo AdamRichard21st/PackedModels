@@ -2,7 +2,14 @@
 #include < fakemeta >
 #include < hamsandwich >
 
-#define VERSION "1.1.1"
+#define VERSION "1.2.0"
+
+#define MAX_CWEAPONBOX_ITEMS    6
+#define CSW_BACKPACK            CSW_P90 + 1
+
+#define CUSTOM_CGRENADE_ID      33
+#define CUSTOM_CWEAPONBOX_ID    34
+
 
 /**
  * Defines if dropped C4 backpack should be rendered
@@ -14,11 +21,47 @@
 #define C4_BACKPACK_SUPPORT true
 
 
-#define MAX_CWEAPONBOX_ITEMS    6
-#define CSW_BACKPACK            CSW_P90 + 1
+/**
+ * This list defines which weapons must not be rendered
+ * from packed models file. It affects p_ and w_ variants.
+ *
+ * Usage: Just uncomment weapons you want to be ignored.
+ */
+public const IGNORE_LIST[] = {
+    // fixed item, please, do not remove
+    CSW_NONE,
 
-#define CUSTOM_CGRENADE_ID      33
-#define CUSTOM_CWEAPONBOX_ID    34
+    // CSW_P228,
+    // CSW_SCOUT,
+    // CSW_HEGRENADE,
+    // CSW_XM1014,
+    // CSW_C4,
+    // CSW_MAC10,
+    // CSW_AUG,
+    // CSW_SMOKEGRENADE,
+    // CSW_ELITE,
+    // CSW_FIVESEVEN,
+    // CSW_UMP45,
+    // CSW_SG550,
+    // CSW_GALIL,
+    // CSW_FAMAS,
+    // CSW_USP,
+    // CSW_GLOCK18,
+    // CSW_AWP,
+    // CSW_MP5NAVY,
+    // CSW_M249,
+    // CSW_M3,
+    // CSW_M4A1,
+    // CSW_TMP,
+    // CSW_G3SG1,
+    // CSW_FLASHBANG,
+    // CSW_DEAGLE,
+    // CSW_SG552,
+    // CSW_AK47,
+    // CSW_KNIFE,
+    // CSW_P90,
+    // CSW_BACKPACK,
+};
 
 
 enum PackedModelsAnimations
@@ -31,20 +74,12 @@ public const ENTITY_BASE_CLASS[] = "info_target";
 public const PACKED_MODELS_FILE[] = "models/weapons.mdl";
 
 public ENTITIES[MAX_PLAYERS + 1];
+public ignoredList;
 
 
 public plugin_init()
 {
     register_plugin("Packed Models", VERSION, "AdamRichard21st");
-
-    for (new i = CSW_P228, weaponName[32]; i <= CSW_P90; i++)
-    {
-        if (get_weaponname(i, weaponName, charsmax(weaponName)))
-        {
-            RegisterHam(Ham_Item_Deploy, weaponName, "OnWeaponDeploy", .Post = true);
-            RegisterHam(Ham_Item_Holster, weaponName, "OnWeaponHolster", .Post = false);
-        }
-    }
 
     RegisterHam(Ham_Spawn, "weaponbox", "OnWeaponBoxSpawn", .Post = true);
     RegisterHam(Ham_Spawn, "grenade", "OnGrenadeSpawn", .Post = true);
@@ -52,6 +87,16 @@ public plugin_init()
     register_forward(FM_SetModel, "OnSetModel");
 
     CreateBaseEntities();
+    GetIgnoreList();
+
+    for (new i = CSW_P228, weaponName[32]; i <= CSW_P90; i++)
+    {
+        if (get_weaponname(i, weaponName, charsmax(weaponName)) && !ShouldIgnore(i))
+        {
+            RegisterHam(Ham_Item_Deploy, weaponName, "OnWeaponDeploy", .Post = true);
+            RegisterHam(Ham_Item_Holster, weaponName, "OnWeaponHolster", .Post = false);
+        }
+    }
 }
 
 
@@ -148,7 +193,13 @@ public OnSetModel(entity, const model[])
         }
         default:
         {
+            if (ShouldIgnore(CSW_C4))
+            {
+                return FMRES_IGNORED;
+            }
+
             static className[32];
+            
             pev(entity, pev_classname, className, charsmax(className));
 
             if (equal(className, "grenade"))
@@ -176,7 +227,7 @@ RenderCustomGrenade(grenade)
 {
     new grenadeId = GetCGrenadeType(grenade);
 
-    if (grenadeId == CSW_NONE)
+    if (grenadeId == CSW_NONE || ShouldIgnore(grenadeId))
     {
         return FMRES_IGNORED;
     }
@@ -211,6 +262,11 @@ RenderCustomWeaponBox(weaponbox)
     }
 
     new weaponId = get_ent_data(weapon, "CBasePlayerItem", "m_iId");
+
+    if (ShouldIgnore(weaponId))
+    {
+        return FMRES_IGNORED;
+    }
 
     if (weaponId == CSW_C4)
     {
@@ -305,4 +361,19 @@ SetCustomId(entity, customId)
 GetCustomId(entity)
 {
     return pev(entity, pev_euser1);
+}
+
+
+GetIgnoreList()
+{
+    for (new i = 0; i < sizeof IGNORE_LIST; i++)
+    {
+        ignoredList |= (1 << IGNORE_LIST[i]);
+    }
+}
+
+
+ShouldIgnore(weaponId)
+{
+    return (ignoredList & (1 << weaponId));
 }
