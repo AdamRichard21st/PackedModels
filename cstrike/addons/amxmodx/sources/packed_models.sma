@@ -342,3 +342,18 @@ GetCustomId(entity)
 {
     return pev(entity, pev_euser1);
 }
+
+
+GetIgnoreList()
+{
+    for (new i = 0; i < sizeof IGNORE_LIST; i++)
+    {
+        ignoredList |= (1 << IGNORE_LIST[i]);
+    }
+}
+
+
+ShouldIgnore(weaponId)
+{
+    return (ignoredList & (1 << weaponId));
+}
