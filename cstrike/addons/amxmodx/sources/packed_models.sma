@@ -2,7 +2,7 @@
 #include < fakemeta >
 #include < hamsandwich >
 
-#define VERSION "1.1.0"
+#define VERSION "1.1.1"
 
 /**
  * Defines if dropped C4 backpack should be rendered
@@ -131,7 +131,7 @@ public OnWeaponBoxSpawn(weaponbox)
 
 public OnSetModel(entity, const model[])
 {
-    if (!pev_valid(entity))
+    if (pev_valid(entity) != 2)
     {
         return FMRES_IGNORED;
     }
@@ -146,9 +146,29 @@ public OnSetModel(entity, const model[])
         {
             return RenderCustomWeaponBox(entity);
         }
+        default:
+        {
+            static className[32];
+            pev(entity, pev_classname, className, charsmax(className));
+
+            if (equal(className, "grenade"))
+            {
+                return RenderCustomC4(entity);
+            }
+        }
     }
 
     return FMRES_IGNORED;
+}
+
+
+RenderCustomC4(grenade)
+{
+    engfunc(EngFunc_SetModel, grenade, PACKED_MODELS_FILE);
+    set_pev(grenade, pev_body, CSW_C4);
+    set_pev(grenade, pev_sequence, ANIM_WEAPON_WORLD);
+
+    return FMRES_SUPERCEDE;
 }
 
 
@@ -255,11 +275,6 @@ HidePlayerWeapon(id)
 
 GetCGrenadeType(grenade)
 {
-    if (get_ent_data(grenade, "CGrenade", "m_bIsC4"))
-    {
-        return CSW_C4;
-    }
-
     new eventFlags = get_ent_data(grenade, "CGrenade", "m_usEvent");
 
     if (eventFlags & (1 << 0))
