@@ -2,7 +2,13 @@
 #include < fakemeta >
 #include < hamsandwich >
 
-#define VERSION "1.1.1"
+
+#define MAX_CWEAPONBOX_ITEMS    6
+#define CSW_BACKPACK            CSW_P90 + 1
+
+#define CUSTOM_CGRENADE_ID      33
+#define CUSTOM_CWEAPONBOX_ID    34
+
 
 /**
  * Defines if dropped C4 backpack should be rendered
@@ -67,20 +73,12 @@ public const ENTITY_BASE_CLASS[] = "info_target";
 public const PACKED_MODELS_FILE[] = "models/weapons.mdl";
 
 public ENTITIES[MAX_PLAYERS + 1];
+public ignoredList;
 
 
 public plugin_init()
 {
     register_plugin("Packed Models", VERSION, "AdamRichard21st");
-
-    for (new i = CSW_P228, weaponName[32]; i <= CSW_P90; i++)
-    {
-        if (get_weaponname(i, weaponName, charsmax(weaponName)))
-        {
-            RegisterHam(Ham_Item_Deploy, weaponName, "OnWeaponDeploy", .Post = true);
-            RegisterHam(Ham_Item_Holster, weaponName, "OnWeaponHolster", .Post = false);
-        }
-    }
 
     RegisterHam(Ham_Spawn, "weaponbox", "OnWeaponBoxSpawn", .Post = true);
     RegisterHam(Ham_Spawn, "grenade", "OnGrenadeSpawn", .Post = true);
@@ -88,6 +86,16 @@ public plugin_init()
     register_forward(FM_SetModel, "OnSetModel");
 
     CreateBaseEntities();
+    GetIgnoreList();
+
+    for (new i = CSW_P228, weaponName[32]; i <= CSW_P90; i++)
+    {
+        if (get_weaponname(i, weaponName, charsmax(weaponName)) && !ShouldIgnore(i))
+        {
+            RegisterHam(Ham_Item_Deploy, weaponName, "OnWeaponDeploy", .Post = true);
+            RegisterHam(Ham_Item_Holster, weaponName, "OnWeaponHolster", .Post = false);
+        }
+    }
 }
 
 
@@ -184,7 +192,13 @@ public OnSetModel(entity, const model[])
         }
         default:
         {
+            if (ShouldIgnore(CSW_C4))
+            {
+                return FMRES_IGNORED;
+            }
+
             static className[32];
+            
             pev(entity, pev_classname, className, charsmax(className));
 
             if (equal(className, "grenade"))
@@ -212,7 +226,7 @@ RenderCustomGrenade(grenade)
 {
     new grenadeId = GetCGrenadeType(grenade);
 
-    if (grenadeId == CSW_NONE)
+    if (grenadeId == CSW_NONE || ShouldIgnore(grenadeId))
     {
         return FMRES_IGNORED;
     }
@@ -247,6 +261,11 @@ RenderCustomWeaponBox(weaponbox)
     }
 
     new weaponId = get_ent_data(weapon, "CBasePlayerItem", "m_iId");
+
+    if (ShouldIgnore(weaponId))
+    {
+        return FMRES_IGNORED;
+    }
 
     if (weaponId == CSW_C4)
     {
